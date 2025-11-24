@@ -1,83 +1,76 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLanguage } from '../context/LanguageContext'
+import { getPeople } from '../lib/sanity'
 import '../styles/Pages.css'
 
 const PeoplePage = () => {
   const { language } = useLanguage()
+  const [people, setPeople] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   
   const content = {
     en: {
       title: 'People',
       subtitle: 'Research team members',
       facultyTitle: 'Faculty',
-      studentsTitle: 'Students'
+      studentsTitle: 'Students',
+      loading: 'Loading...',
+      error: 'Failed to load team members'
     },
     zh: {
       title: '团队成员',
       subtitle: '课题组成员',
       facultyTitle: '导师',
-      studentsTitle: '学生'
+      studentsTitle: '学生',
+      loading: '加载中...',
+      error: '加载团队成员失败'
     }
   }
 
-  const faculty = [
-    {
-      name: 'Professor Name',
-      role: 'Principal Investigator',
-      photo: '',
-      bio: {
-        en: 'Research interests and bio...',
-        zh: '研究方向和个人简介...'
-      },
-      email: 'professor@university.edu',
-      website: '#'
-    }
-  ]
-
-  const students = [
-    {
-      name: 'PhD Student 1',
-      role: 'PhD Student',
-      photo: '',
-      bio: {
-        en: 'Research: Efficient LLM Agents',
-        zh: '研究方向：高效LLM Agent'
-      },
-      email: 'student1@university.edu'
-    },
-    {
-      name: 'PhD Student 2',
-      role: 'PhD Student',
-      photo: '',
-      bio: {
-        en: 'Research: Distributed Agent Systems',
-        zh: '研究方向：分布式Agent系统'
-      },
-      email: 'student2@university.edu'
-    },
-    {
-      name: 'Master Student 1',
-      role: 'Master Student',
-      photo: '',
-      bio: {
-        en: 'Research: Edge Agent Deployment',
-        zh: '研究方向：边缘Agent部署'
-      },
-      email: 'student3@university.edu'
-    },
-    {
-      name: 'Master Student 2',
-      role: 'Master Student',
-      photo: '',
-      bio: {
-        en: 'Research: Healthcare Agents',
-        zh: '研究方向：医疗Agent应用'
-      },
-      email: 'student4@university.edu'
-    }
-  ]
+  useEffect(() => {
+    getPeople()
+      .then(data => {
+        setPeople(data)
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error('Error fetching people:', err)
+        setError(err.message)
+        setLoading(false)
+      })
+  }, [])
 
   const t = content[language]
+  
+  if (loading) {
+    return (
+      <section className="page-section">
+        <div className="container">
+          <div className="page-header">
+            <h1 className="page-title">{t.title}</h1>
+            <p className="page-subtitle">{t.loading}</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section className="page-section">
+        <div className="container">
+          <div className="page-header">
+            <h1 className="page-title">{t.title}</h1>
+            <p className="page-subtitle" style={{color: 'red'}}>{t.error}</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  const faculty = people.filter(p => p.category === 'faculty')
+  const students = people.filter(p => p.category === 'students')
 
   return (
     <section className="page-section">
@@ -93,8 +86,8 @@ const PeoplePage = () => {
             {faculty.map((person, index) => (
               <div key={index} className="person-card">
                 <div className="person-photo">
-                  {person.photo ? (
-                    <img src={person.photo} alt={person.name} />
+                  {person.photoUrl ? (
+                    <img src={person.photoUrl} alt={person.name} />
                   ) : (
                     <div className="photo-placeholder">{language === 'en' ? 'Photo' : '照片'}</div>
                   )}
@@ -102,7 +95,7 @@ const PeoplePage = () => {
                 <h3 className="person-name">{person.name}</h3>
                 <p className="person-role">{person.role}</p>
                 <p className="person-bio">
-                  {typeof person.bio === 'object' ? person.bio[language] : person.bio}
+                  {language === 'en' ? person.bioEn : person.bioZh}
                 </p>
                 <div className="person-links">
                   {person.email && <a href={`mailto:${person.email}`}>Email</a>}
@@ -119,8 +112,8 @@ const PeoplePage = () => {
             {students.map((person, index) => (
               <div key={index} className="person-card">
                 <div className="person-photo">
-                  {person.photo ? (
-                    <img src={person.photo} alt={person.name} />
+                  {person.photoUrl ? (
+                    <img src={person.photoUrl} alt={person.name} />
                   ) : (
                     <div className="photo-placeholder">{language === 'en' ? 'Photo' : '照片'}</div>
                   )}
@@ -128,7 +121,7 @@ const PeoplePage = () => {
                 <h3 className="person-name">{person.name}</h3>
                 <p className="person-role">{person.role}</p>
                 <p className="person-bio">
-                  {typeof person.bio === 'object' ? person.bio[language] : person.bio}
+                  {language === 'en' ? person.bioEn : person.bioZh}
                 </p>
                 <div className="person-links">
                   {person.email && <a href={`mailto:${person.email}`}>Email</a>}

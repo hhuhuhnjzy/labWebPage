@@ -1,22 +1,54 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLanguage } from '../context/LanguageContext'
+import { getNews } from '../lib/sanity'
 import '../styles/Pages.css'
 
 const NewsPage = () => {
   const { language } = useLanguage()
+  const [news, setNews] = useState([])
+  const [loading, setLoading] = useState(true)
   
   const content = {
     en: {
       title: 'News & Events',
-      subtitle: 'Latest updates and activities'
+      subtitle: 'Latest updates and activities',
+      loading: 'Loading...'
     },
     zh: {
       title: '新闻动态',
-      subtitle: '最新动态与活动'
+      subtitle: '最新动态与活动',
+      loading: '加载中...'
     }
   }
 
-  const newsItems = [
+  useEffect(() => {
+    getNews()
+      .then(data => {
+        setNews(data)
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error('Error fetching news:', err)
+        setLoading(false)
+      })
+  }, [])
+
+  const t = content[language]
+  
+  if (loading) {
+    return (
+      <section className="page-section">
+        <div className="container">
+          <div className="page-header">
+            <h1 className="page-title">{t.title}</h1>
+            <p className="page-subtitle">{t.loading}</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  const oldNewsItems = [
     {
       date: 'Fall 2025',
       title: {
@@ -85,7 +117,7 @@ const NewsPage = () => {
     }
   ]
 
-  const t = content[language]
+  const displayNews = news.length > 0 ? news : oldNewsItems
 
   return (
     <section className="page-section">
@@ -96,7 +128,7 @@ const NewsPage = () => {
         </div>
         
         <div className="news-grid-page">
-          {newsItems.map((item, index) => (
+          {displayNews.map((item, index) => (
             <article key={index} className="news-card-page">
               <div className="news-date-page">{item.date}</div>
               <h2 className="news-title-page">{typeof item.title === 'object' ? item.title[language] : item.title}</h2>

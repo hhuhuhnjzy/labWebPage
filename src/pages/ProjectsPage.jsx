@@ -1,24 +1,56 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLanguage } from '../context/LanguageContext'
+import { getProjects } from '../lib/sanity'
 import '../styles/Pages.css'
 
 const ProjectsPage = () => {
   const { language } = useLanguage()
+  const [projects, setProjects] = useState([])
+  const [loading, setLoading] = useState(true)
   
   const content = {
     en: {
       title: 'Projects',
       subtitle: 'Research projects',
-      collaborators: 'Team Members:'
+      collaborators: 'Team Members:',
+      loading: 'Loading...'
     },
     zh: {
       title: '研究项目',
       subtitle: '课题组研究项目',
-      collaborators: '团队成员：'
+      collaborators: '团队成员：',
+      loading: '加载中...'
     }
   }
 
-  const projects = [
+  useEffect(() => {
+    getProjects()
+      .then(data => {
+        setProjects(data)
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error('Error fetching projects:', err)
+        setLoading(false)
+      })
+  }, [])
+
+  const t = content[language]
+  
+  if (loading) {
+    return (
+      <section className="page-section">
+        <div className="container">
+          <div className="page-header">
+            <h1 className="page-title">{t.title}</h1>
+            <p className="page-subtitle">{t.loading}</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  const oldProjects = [
     {
       title: 'Efficient LLM Agent Framework',
       description: {
@@ -79,7 +111,8 @@ const ProjectsPage = () => {
     }
   ]
 
-  const t = content[language]
+  // 如果 Sanity 中没有数据，使用旧数据作为后备
+  const displayProjects = projects.length > 0 ? projects : oldProjects
 
   return (
     <section className="page-section">
@@ -90,7 +123,7 @@ const ProjectsPage = () => {
         </div>
         
         <div className="projects-list">
-          {projects.map((project, index) => (
+          {displayProjects.map((project, index) => (
             <article key={index} className="project-card">
               <div className="project-header">
                 <h2 className="project-title">{project.title}</h2>
@@ -102,14 +135,16 @@ const ProjectsPage = () => {
                 {typeof project.description === 'object' ? project.description[language] : project.description}
               </p>
               <div className="project-meta">
-                <div className="project-collaborators">
-                  <strong>{t.collaborators}</strong> {project.collaborators.join(', ')}
-                </div>
-                {Object.keys(project.links).length > 0 && (
+                {project.collaborators && project.collaborators.length > 0 && (
+                  <div className="project-collaborators">
+                    <strong>{t.collaborators}</strong> {project.collaborators.join(', ')}
+                  </div>
+                )}
+                {(project.githubUrl || project.demoUrl || project.paperUrl) && (
                   <div className="project-links">
-                    {project.links.github && <a href={project.links.github} className="project-link">GitHub</a>}
-                    {project.links.demo && <a href={project.links.demo} className="project-link">Demo</a>}
-                    {project.links.paper && <a href={project.links.paper} className="project-link">Paper</a>}
+                    {project.githubUrl && <a href={project.githubUrl} className="project-link">GitHub</a>}
+                    {project.demoUrl && <a href={project.demoUrl} className="project-link">Demo</a>}
+                    {project.paperUrl && <a href={project.paperUrl} className="project-link">Paper</a>}
                   </div>
                 )}
               </div>

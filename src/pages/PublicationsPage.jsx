@@ -1,22 +1,54 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLanguage } from '../context/LanguageContext'
+import { getPublications } from '../lib/sanity'
 import '../styles/Pages.css'
 
 const PublicationsPage = () => {
   const { language } = useLanguage()
+  const [publications, setPublications] = useState([])
+  const [loading, setLoading] = useState(true)
   
   const content = {
     en: {
       title: 'Publications',
-      subtitle: 'Research papers and academic publications'
+      subtitle: 'Research papers and academic publications',
+      loading: 'Loading...'
     },
     zh: {
       title: '学术成果',
-      subtitle: '研究论文与学术发表'
+      subtitle: '研究论文与学术发表',
+      loading: '加载中...'
     }
   }
 
-  const publications = [
+  useEffect(() => {
+    getPublications()
+      .then(data => {
+        setPublications(data)
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error('Error fetching publications:', err)
+        setLoading(false)
+      })
+  }, [])
+
+  const t = content[language]
+  
+  if (loading) {
+    return (
+      <section className="page-section">
+        <div className="container">
+          <div className="page-header">
+            <h1 className="page-title">{t.title}</h1>
+            <p className="page-subtitle">{t.loading}</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  const oldPublications = [
     {
       date: 'January 2026',
       title: 'Please Don\'t Kill My Vibe: Empowering Agents with Data Flow Control',
@@ -102,7 +134,7 @@ const PublicationsPage = () => {
     }
   ]
 
-  const t = content[language]
+  const displayPublications = publications.length > 0 ? publications : oldPublications
 
   return (
     <section className="page-section">
@@ -113,18 +145,18 @@ const PublicationsPage = () => {
         </div>
         
         <div className="publications-list-page">
-          {publications.map((pub, index) => (
+          {displayPublications.map((pub, index) => (
             <article key={index} className="publication-card-page">
               <div className="pub-date-page">{pub.date}</div>
               <h2 className="pub-title-page">{pub.title}</h2>
               <p className="pub-authors-page">{pub.authors}</p>
               <p className="pub-venue-page">{pub.venue}</p>
               <div className="pub-links">
-                {pub.links.pdf && <a href={pub.links.pdf} className="pub-link">PDF</a>}
-                {pub.links.code && <a href={pub.links.code} className="pub-link">Code</a>}
-                {pub.links.slides && <a href={pub.links.slides} className="pub-link">Slides</a>}
-                {pub.links.demo && <a href={pub.links.demo} className="pub-link">Demo</a>}
-                {pub.links.blog && <a href={pub.links.blog} className="pub-link">Blog</a>}
+                {pub.pdfUrl && <a href={pub.pdfUrl} className="pub-link">PDF</a>}
+                {pub.codeUrl && <a href={pub.codeUrl} className="pub-link">Code</a>}
+                {pub.slidesUrl && <a href={pub.slidesUrl} className="pub-link">Slides</a>}
+                {pub.demoUrl && <a href={pub.demoUrl} className="pub-link">Demo</a>}
+                {pub.blogUrl && <a href={pub.blogUrl} className="pub-link">Blog</a>}
               </div>
             </article>
           ))}
