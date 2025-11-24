@@ -1,5 +1,6 @@
 import React from 'react'
 import { useLanguage } from '../context/LanguageContext'
+import SEOHead from '../components/SEOHead'
 import '../styles/Pages.css'
 
 const PositionsPage = () => {
@@ -129,6 +130,12 @@ const PositionsPage = () => {
 
   return (
     <section className="page-section">
+      <SEOHead 
+        title={language === 'zh' ? 'AgentFabric招聘 - 加入我们' : 'AgentFabric Positions - Join Us'}
+        description={language === 'zh' ? 'AgentFabric实验室正在招募对Agent系统、分布式框架和机器学习感兴趣的研究人员。加入我们，共同塑造AI的未来。' : 'AgentFabric Lab is recruiting researchers interested in agent systems, distributed frameworks, and machine learning. Join us to shape the future of AI.'}
+        keywords="AgentFabric jobs, research positions, AI researcher, PhD positions, machine learning jobs, agent systems"
+        path="/positions"
+      />
       <div className="container">
         <div className="page-header">
           <h1 className="page-title">{t.title}</h1>

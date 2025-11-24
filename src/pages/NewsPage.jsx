@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useLanguage } from '../context/LanguageContext'
 import { getNews } from '../lib/sanity'
+import SEOHead from '../components/SEOHead'
 import '../styles/Pages.css'
 
 const NewsPage = () => {
@@ -121,6 +122,12 @@ const NewsPage = () => {
 
   return (
     <section className="page-section">
+      <SEOHead 
+        title={language === 'zh' ? 'AgentFabric新闻动态 - 实验室资讯' : 'AgentFabric News - Lab Updates'}
+        description={language === 'zh' ? '获取AgentFabric实验室的最新新闻、活动和公告。' : 'Stay updated with the latest news, events, and announcements from AgentFabric Lab.'}
+        keywords="AgentFabric news, lab updates, research events, AI agent news"
+        path="/news"
+      />
       <div className="container">
         <div className="page-header">
           <h1 className="page-title">{t.title}</h1>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useLanguage } from '../context/LanguageContext'
 import { getPublications } from '../lib/sanity'
+import SEOHead from '../components/SEOHead'
 import '../styles/Pages.css'
 
 const PublicationsPage = () => {
@@ -138,6 +139,12 @@ const PublicationsPage = () => {
 
   return (
     <section className="page-section">
+      <SEOHead 
+        title={language === 'zh' ? 'AgentFabric论文发表 - 学术出版物' : 'AgentFabric Publications - Research Papers'}
+        description={language === 'zh' ? '浏览AgentFabric实验室发表的学术论文和研究成果，涵盖AI Agent、分布式系统等领域。' : 'Browse academic publications and research papers from AgentFabric Lab, covering AI agents, distributed systems, and more.'}
+        keywords="AI agent papers, LLM publications, machine learning research papers, agent systems research"
+        path="/publications"
+      />
       <div className="container">
         <div className="page-header">
           <h1 className="page-title">{t.title}</h1>

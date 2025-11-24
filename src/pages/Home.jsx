@@ -1,5 +1,6 @@
 import React from 'react'
 import { useLanguage } from '../context/LanguageContext'
+import SEOHead from '../components/SEOHead'
 import '../styles/Home.css'
 
 const Home = () => {
@@ -133,6 +134,12 @@ const Home = () => {
 
   return (
     <div className="home-page">
+      <SEOHead 
+        title={language === 'zh' ? 'AgentFabric实验室 - AI Agent基础设施研究' : 'AgentFabric Lab - AI Agent Infrastructure Research'}
+        description={language === 'zh' ? 'AgentFabric课题组致力于构建未来AI Agent安全可靠地自动化复杂工作的基础设施，研究分布式框架、高效LLM Agent、边缘计算等方向。' : 'AgentFabric is a research group focused on infrastructure for AI agents, including distributed frameworks, efficient LLM agents, edge computing, and domain-specific agents.'}
+        keywords="AgentFabric, Agent Fabric, AI Agent, LLM, Large Language Model, Distributed Systems, Edge Computing, Machine Learning, Research Lab, Agent Infrastructure, 人工智能, 智能体"
+        path="/"
+      />
       {/* Hero Section with Logo and Description */}
       <section className="home-hero">
         <div className="container">
