@@ -1,0 +1,23 @@
+.language-switcher {
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  border: 2px solid var(--primary-orange);
+  color: var(--primary-orange);
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.language-switcher:hover {
+  background-color: var(--primary-orange);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.language-switcher:active {
+  transform: translateY(0);
+}
+
+
