@@ -25,38 +25,41 @@ export async function getPeople() {
   `)
 }
 
-// 获取项目
-export async function getProjects() {
+// 获取研究项目（按类别）
+export async function getResearch(category = null) {
+  const filter = category 
+    ? `*[_type == "research" && category == "${category}"]`
+    : `*[_type == "research"]`
+  
   return await client.fetch(`
-    *[_type == "projects"] | order(order asc) {
+    ${filter} | order(order asc) {
       title,
+      titleZh,
+      category,
+      participants,
+      "thumbnailUrl": thumbnail.asset->url,
+      tags,
       descriptionEn,
       descriptionZh,
-      status,
-      collaborators,
-      githubUrl,
-      demoUrl,
-      paperUrl
+      projectUrl,
+      order
     }
   `)
 }
 
-// 获取论文
-export async function getPublications() {
-  return await client.fetch(`
-    *[_type == "publications"] | order(year desc, date desc) {
-      title,
-      authors,
-      venue,
-      date,
-      year,
-      pdfUrl,
-      codeUrl,
-      slidesUrl,
-      demoUrl,
-      blogUrl
-    }
-  `)
+// 获取算法类研究
+export async function getAlgorithmResearch() {
+  return getResearch('algorithm')
+}
+
+// 获取框架类研究
+export async function getFrameworkResearch() {
+  return getResearch('framework')
+}
+
+// 获取应用类研究
+export async function getApplicationResearch() {
+  return getResearch('application')
 }
 
 // 获取新闻
@@ -71,4 +74,3 @@ export async function getNews() {
     }
   `)
 }
-

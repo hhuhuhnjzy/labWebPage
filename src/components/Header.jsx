@@ -25,16 +25,14 @@ const Header = () => {
     en: {
       home: 'Home',
       people: 'People',
-      projects: 'Projects',
-      publications: 'Publications',
+      research: 'Research',
       news: 'News',
       positions: 'Positions'
     },
     zh: {
       home: '首页',
       people: '团队',
-      projects: '项目',
-      publications: '论文',
+      research: '研究',
       news: '动态',
       positions: '招聘'
     }
@@ -47,13 +45,12 @@ const Header = () => {
       <div className="container header-content">
         <Link to="/" className="logo-section">
           <img src="/logo.png" alt="AgentFabric Logo" className="logo-img" />
-          <span className="logo-text">AgentFabric</span>
+          <span className="logo-text">Agent Fabric Lab</span>
         </Link>
         <nav className="nav">
           <Link to="/" className={`nav-link ${isActive('/')}`}>{t.home}</Link>
           <Link to="/people" className={`nav-link ${isActive('/people')}`}>{t.people}</Link>
-          <Link to="/projects" className={`nav-link ${isActive('/projects')}`}>{t.projects}</Link>
-          <Link to="/publications" className={`nav-link ${isActive('/publications')}`}>{t.publications}</Link>
+          <Link to="/research" className={`nav-link ${isActive('/research')}`}>{t.research}</Link>
           <Link to="/news" className={`nav-link ${isActive('/news')}`}>{t.news}</Link>
           <Link to="/positions" className={`nav-link ${isActive('/positions')}`}>{t.positions}</Link>
           <LanguageSwitcher />
@@ -64,4 +61,3 @@ const Header = () => {
 }
 
 export default Header
-
